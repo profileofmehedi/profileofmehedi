@@ -1024,10 +1024,11 @@
                         <!-- <div class="g-recaptcha" data-sitekey="6LdqmCAUAAAAAMMNEZvn6g4W5e0or2sZmAVpxVqI" data-theme="dark"></div> -->
 
                         <input
-                          type="submit"
+                          type="button" onclick="sendEmail()"
                           class="button btn-send"
                           value="Send message"
                         />
+						<span id="emailresult" style="color: yellow; font-size: 16px; margin-left: 10px;"></span>
                       </div>
                     </form>
                   </div>
@@ -1059,12 +1060,14 @@
     <script src="js/jquery.googlemap.js"></script>
     <script src="js/validator.js"></script>
     <script src="js/main.js"></script>
+	<script src="https://smtpjs.com/v3/smtp.js"></script>
     <script>
       document.addEventListener("contextmenu", (event) =>
         event.preventDefault()
       );
 
-      document.onkeydown = function (e) {
+      
+	  document.onkeydown = function (e) {
         if (e.ctrlKey && e.shiftKey && e.keyCode == 73) {
           return false;
         } else if (e.ctrlKey && e.keyCode == 85) {
@@ -1073,6 +1076,30 @@
           return true;
         }
       };
+	  
+	  function sendEmail(){
+		var fullName = $('#form_name').val();
+		var email = $('#form_email').val();
+		var subject = $('#form_subject').val();
+		var message = $('#form_message').val();
+		
+		
+		Email.send({
+		Host: "smtp.gmail.com",
+		Username : "portfoliomailofmehedi@gmail.com",
+		Password : "S108284s",
+		To : 'mehedihasan9339@gmail.com',
+		From : email,
+		Subject : "profileofmehedi.xyz-" + fullName + "-" + subject,
+		Body : message,
+		}).then(
+			
+			message => {
+			$('#emailresult').show();
+			$('#emailresult').text("mail sent successfully");
+			}
+		);
+	  }
     </script>
   </body>
 </html>
