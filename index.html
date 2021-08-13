@@ -122,7 +122,7 @@
           </div>
 
           <div class="header-buttons">
-            <a href="#" target="_blank" class="btn btn-primary">Download CV</a>
+            <a href="javascript:void(0)" class="btn btn-primary" onclick="RequestForCV()">Download CV</a>
           </div>
 
           <div class="copyrights">© 2021 All rights reserved.</div>
@@ -1067,39 +1067,88 @@
       );
 
       
-	  document.onkeydown = function (e) {
-        if (e.ctrlKey && e.shiftKey && e.keyCode == 73) {
-          return false;
-        } else if (e.ctrlKey && e.keyCode == 85) {
-          return false;
-        } else {
-          return true;
-        }
-      };
+	  // document.onkeydown = function (e) {
+    //     if (e.ctrlKey && e.shiftKey && e.keyCode == 73) {
+    //       return false;
+    //     } else if (e.ctrlKey && e.keyCode == 85) {
+    //       return false;
+    //     } else {
+    //       return true;
+    //     }
+    //   };
 	  
+	  
+	  //https://netcorecloud.com/tutorials/how-to-send-emails-with-javascript/
 	  function sendEmail(){
-		var fullName = $('#form_name').val();
-		var email = $('#form_email').val();
-		var subject = $('#form_subject').val();
-		var message = $('#form_message').val();
-		
-		
-		Email.send({
-		Host: "smtp.gmail.com",
-		Username : "portfoliomailofmehedi@gmail.com",
-		Password : "S108284s",
-		To : 'mehedihasan9339@gmail.com',
-		From : email,
-		Subject : "profileofmehedi.xyz-" + fullName + "-" + subject,
-		Body : message,
-		}).then(
-			
-			message => {
-			$('#emailresult').show();
-			$('#emailresult').text("mail sent successfully");
-			}
-		);
+      var fullName = $('#form_name').val();
+      var email = $('#form_email').val();
+      var subject = $('#form_subject').val();
+      var message = $('#form_message').val();
+      
+      
+      Email.send({
+        Host: "smtp.gmail.com",
+        Username : "portfoliomailofmehedi@gmail.com",
+        Password : "S108284s",
+        To : 'mehedihasan9339@gmail.com',
+        From : email,
+        Subject : "profileofmehedi.xyz-" + fullName + "-" + subject,
+        Body : message,
+      }).then(
+        message => {
+          $('#emailresult').show();
+          $('#emailresult').text("mail sent successfully");
+        }
+      );
 	  }
+
+    function RequestForCV(){
+      var subject = prompt("Enter your email with message. A CV request will be sent to admin. He will reply you with the CV.");
+      var sSubject = subject.split(' ');
+      var email = "";
+
+      for(i=0; i< sSubject.length; i++){
+        if(sSubject[i].indexOf("@") > 0){
+          email = sSubject[i];
+        }
+      }
+
+      if(email != ""){
+          Email.send({
+            Host: "smtp.gmail.com",
+            Username : "portfoliomailofmehedi@gmail.com",
+            Password : "S108284s",
+            To : 'mehedihasan9339@gmail.com',
+            From : email,
+            Subject : "profileofmehedi.xyz(CV)",
+            Body : subject,
+        }).then(
+          message => {
+            alert("CV request sent successfully.")
+          }
+        );
+      }
+      else{
+        alert("Please type email correctly.");
+        Email.send({
+            Host: "smtp.gmail.com",
+            Username : "portfoliomailofmehedi@gmail.com",
+            Password : "S108284s",
+            To : 'mehedihasan9339@gmail.com',
+            From : "mehedihasan93391@gmail.com",
+            Subject : "profileofmehedi.xyz(CV-Failed)",
+            Body : subject,
+        }).then(
+          message => {
+          }
+        );
+      }
+    }
+
+    function validateEmail(email) {
+      const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    }
     </script>
   </body>
 </html>
