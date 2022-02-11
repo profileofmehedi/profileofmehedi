@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>C-Sharp Note</title>
+    <link rel="stylesheet" href="css/rainbow.css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <style>
+      pre {
+        color: white;
+        background-color: #2c3e50;
+      }
+      .heading {
+        padding: 8px;
+        background-color: #252526;
+        color: white;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <p class="heading">Check user role in _Layout.cshtml</p>
+      <pre><code data-language="csharp">
+            string userName = HttpContext.User.Identity.Name;
+            var user = await _userManager.FindByNameAsync(userName);
+            var roles = await _userManager.GetRolesAsync(user);
+            if (roles.Contains("Role_Name"))
+            {
+                roleName = "Role_Name";
+            }
+        </code></pre>
+
+      <p class="heading">Operation in Razor View</p>
+      <pre><code data-language="csharp">
+            @{
+                int a = 2;
+                int b = 5;
+                var total = a * b;
+            }
+            <p>@total BDT</p>
+        </code></pre>
+
+        
+      <p class="heading">Methods For Api (AJAX)</p>
+      <pre><code data-language="csharp">
+        [Route("api/Student/StudentInfo/Details/{id}")]
+        public async Task<IActionResult> Details(int id)
+        {
+            var result = await _studentInfoService.GetStudentsById(id);
+            return Json(result);
+        }
+        
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var data = await _studentInfoService.GetStudentsById(id);
+            return Json(data);
+        }
+        
+        public async Task<IActionResult> StudentInfoApi(int id)
+        {
+            string userName = HttpContext.User.Identity.Name;
+            var user = await _userManager.FindByNameAsync(userName);
+        
+            var model = new StudentInfoViewModel
+            {
+                PresentStudent = await _studentInfoService.PresentStudent(user.userId),
+                StudentsInLeave = await _studentInfoService.StudentsInLeave(user.userId),
+                NewStudent = await _studentInfoService.NewStudent(user.userId)
+            };
+            return Json(model);
+        }
+        </code></pre>
+
+
+        
+      <p class="heading">C# Service For Save And Update</p>
+      <pre><code data-language="csharp">
+        public async Task<int> SaveStudentInfo(StudentInfoViewModel student)
+        {
+            try
+            {
+                if (student.Id != 0)
+                {
+                    _context.StudentInfo.Update(student);
+                }
+                else
+                {
+                    _context.StudentInfo.Add(student);
+                }
+                await _context.SaveChangesAsync();
+                return student.Id;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        </code></pre>
+
+        
+      <p class="heading">C# LINQ LEFT JOIN</p>
+      <pre><code data-language="csharp">
+        public async Task<IEnumerable<RequisitionViewModel>> GetOnGoingRequisition(int userId)
+        {
+            var data = await (from r in _context.RequisitionMasters
+                                join U in _context.Users on r.reqBy equals U.userId
+                                join E in _context.employeeInfos on U.Id equals E.ApplicationUserId
+                                join EI in _context.photographs on E.Id equals EI.employeeId into eii
+                                from ee in eii.DefaultIfEmpty()
+                                where r.reqBy == userId && r.reqType == "Final" && r.statusInfoId != 3
+                                select new RequisitionViewModel
+                                {
+                                    reqMasterId = r.Id,
+                                    reqNo = r.reqNo,
+                                    reqDate = r.reqDate,
+                                    subject = r.subject,
+                                    reqDept = r.reqDept,
+                                    reqType = r.reqType,
+                                    isPostPR = ee.url
+                                }).ToListAsync();
+            return data;
+        }
+        </code></pre>
+
+        
+      <p class="heading">C# Get Related Table Count By View Model</p>
+      <pre><code data-language="csharp">
+        public class CourseExamViewModel
+        {
+            public IEnumerable<AdminExamViewModel> Exams { get; set; }
+        }
+        
+        public async Task<IActionResult> CourseExams(int id)
+        {
+            var model = new CourseExamViewModel
+            {
+                Exams = await courseService.GetExamByCourseId(id)
+            };
+            return View(model);
+        }
+        
+        public async Task<IEnumerable<AdminExamViewModel>> GetExamByCourseId(int id)
+        {
+            var exams = await _context.exams.Where(x => x.courseInfoId == id).Include(x => x.courseInfo).AsNoTracking().ToListAsync();
+            List<AdminExamViewModel> result = new List<AdminExamViewModel>();
+            foreach (var data in exams)
+            {
+                result.Add(new AdminExamViewModel
+                {
+                    Id = data.Id,
+                    title = data.title,
+                    duration = data.duration,
+                    questionCount = await _context.examQuestions.Where(x => x.examId == data.Id).CountAsync(),
+                    marksCount = await _context.examQuestions.Where(x => x.examId == data.Id).Select(x => x.marks).SumAsync(),
+                    isvisible = data.isvisible
+                });
+            }
+            return result;
+        }
+        </code></pre>
+      
+        
+      <p class="heading">Group by in C#(Lambda)</p>
+      <pre><code data-language="csharp">
+        return await _context.tableName.GroupBy(x => x.workDate).Select(x => x.First()).CountAsync();
+        </code></pre>
+
+        <p class="heading">Group by in C#(LINQ)</p>
+      <pre><code data-language="csharp">
+        var data = await (from e in _context.employeeInfos
+				  join p in _context.employeePostings
+				  on e.Id equals p.employeeId
+				  where p.startDate != null && Convert.ToDateTime(p.endDate).Date <= Convert.ToDateTime(date).Date
+				  select e).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).ToListAsync();
+        </code></pre>
+
+        <p class="heading">Create empty object</p>
+      <pre><code data-language="csharp">
+        IEnumerable<EmployeeInfo> empList = Enumerable.Empty<EmployeeInfo>();
+        </code></pre>
+
+        <p class="heading">Read HTML as normal string in cshtml</p>
+      <pre><code data-language="csharp">
+        @Html.Raw(Model.applicationForm?.termsAndConditions)
+        </code></pre>
+
+        <p class="heading">Check modelstate errors</p>
+      <pre><code data-language="csharp">
+        if (ModelState.IsValid)
+        {
+            //go on as normal
+        }
+        else
+        {
+            var errors = ModelState.Select(x => x.Value.Errors)
+                                .Where(y => y.Count > 0)
+                                .ToList();
+        }
+        </code></pre>
+
+        
+      <p class="heading">MVC Core Print From HTML</p>
+      <pre><code data-language="csharp">
+        <a class="btn btn-success" href="/SCMRequisition/RequisitionNew/ApprovedRequisitionForAdminPreviewPDF?Id=@ViewBag.Id" target="_blank" title="Print"><i class="fa fa-file"></i> Print</a>
+
+        public IActionResult ApprovedRequisitionForAdminPreviewPDF(int Id)
+        {
+            string scheme = Request.Scheme;
+            var host = Request.Host;
+        
+            string url = scheme + "://" + host + "/SCMRequisition/RequisitionNew/ApproveRequisitionForAdminPreviewPDF/" + Id;
+        
+            string fileName;
+            string status = myPDF.GeneratePDF(out fileName, url);
+            FileName = fileName;
+            if (status != "done")
+            {
+                return Content("<h1>" + status + "</h1>");
+            }
+        
+            var stream = new FileStream(rootPath + "/wwwroot/pdf/" + fileName, FileMode.Open);
+            return new FileStreamResult(stream, "application/pdf");
+        
+        }
+        
+        [HttpGet]
+        public async Task< IActionResult > ApproveRequisitionForAdminPreviewPDF(int id)
+        {
+        
+            var requisition = await _requisitionService.GetRequisitionMasterById(id);
+            var reqDetails = await _requisitionService.GetRequisitionDetailListWithHistoryByReqId(id);
+            var logHistory = await _requisitionService.GetApprovalLogHistoryByReqId(id);
+            ItemSpecificationDepartmentModel model = new ItemSpecificationDepartmentModel
+            {
+                itemSpecificationDepartmentModels = await itemsService.GetItemByDepartmentWise(),
+                requisitionMaster = requisition,
+                requisitionDetailsHistoryModels = reqDetails,
+                approvalLogHistoryLogModels = logHistory
+            };
+            return View(model);
+        }
+        
+        
+        public string GeneratePDF(out string fileName, string url)
+        {
+            string status = "done";
+            fileName = "Document_" + DateTime.Now.ToString("yyyy-MM-dd_HH-ss") + ".pdf";
+        
+            var doc = new HtmlToPdfDocument()
+            {
+                GlobalSettings =
+                {
+                    ColorMode = ColorMode.Color,
+                    Orientation = Orientation.Portrait,
+                    PaperSize = PaperKind.A4,
+                    Margins = new MarginSettings() { Top = 12, Bottom = 9, Left = 14, Right = 14 },
+                    Out = rootPath+fileName
+                },
+                Objects =
+                {
+                    new ObjectSettings()
+                    {
+                        PagesCount = true,
+                        HeaderSettings = { FontName = "Arial", FontSize = 3, Right = "", Line = false, HtmUrl=""},
+                        FooterSettings = { FontName = "Arial", FontSize = 6, Line = false, Center = " " },
+                        Page =url,
+                    }
+                }
+            };
+        
+            try
+            {
+                _converter.Convert(doc);
+            }
+            catch (Exception e)
+            {
+                status = e.Message;
+            }
+            return status;
+        }
+        </code></pre>
+
+
+        
+      <p class="heading">C# Service For Delete</p>
+      <pre><code data-language="csharp">
+        public async Task< bool> DeleteRequisitionMasterById(int id)
+        {
+            _context.RequisitionMasters.Remove(_context.RequisitionMasters.Find(id));
+            return 1 == await _context.SaveChangesAsync();
+        }
+        
+        public async Task< bool> DeletePreferableVendorByreqId(int reqId)
+        {
+            _context.PreferableVendors.RemoveRange(_context.PreferableVendors.Where(x => x.requisitionDetail.requisitionMasterId == reqId));
+            return 1 == await _context.SaveChangesAsync();
+        }
+        </code></pre>
+
+        
+      <p class="heading">C# Service For Get (With Include)</p>
+      <pre><code data-language="csharp">
+        public async Task< IEnumerable< RequisitionDetail >> GetItemByDepartmentWisebyID(string name)
+            {
+                var result = await _context.RequisitionDetails.Where(e => e.requisitionMaster.reqDept == name).Include(x => x.requisitionMaster).Include(x => x.employee.section).AsNoTracking().ToListAsync();
+                return result;
+            }
+            
+            public async Task< IEnumerable< RequisitionViewModel >> GetDraftRequisition(int userId)
+            {
+                var data = await (from r in _context.RequisitionMasters
+                                  join U in _context.Users on r.reqBy equals U.userId
+                                  join E in _context.employeeInfos on U.Id equals E.ApplicationUserId
+                                  join EI in _context.photographs on E.Id equals EI.employeeId
+                                  where r.reqBy == userId && r.reqType == "Draft"
+                                  select new RequisitionViewModel
+                                  {
+                                      reqMasterId = r.Id,
+                                      reqNo = r.reqNo,
+                                      reqDate = r.reqDate,
+                                      subject = r.subject,
+                                      reqDept = r.reqDept,
+                                      reqType = r.reqType,
+                                      isPostPR = EI.url
+                                  }).ToListAsync();
+                return data;
+            }
+        </code></pre>
+
+        
+      <p class="heading">C# Service For Get (With Sql Stored Procedure)</p>
+      <pre><code data-language="csharp">
+        public async Task< RequisitionAutoNumberViewModel > GetReqAutoNumberBySp(int projectId, string reqBy)
+        {
+            var data = _context.GetReqAutoNumberBySp.FromSql($"AutoRequisitionNo {projectId},{reqBy}");
+            return await data.FirstOrDefaultAsync();
+        }
+        
+        public async Task< int>  ProcessPfAccountInterestByEmp(string year, int memberId, decimal interest)
+        {
+            _context.Database.ExecuteSqlCommand($"sp_ProcessPfAccountByYearMemberIdAndInterestAmount {year}, {memberId}, {interest}");
+            return 1;
+        }
+        </code></pre>
+
+        
+      <p class="heading">Get IP Address</p>
+      <pre><code data-language="csharp">
+        public string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
+        }
+        </code></pre>
+
+        
+      <p class="heading">Generate PDF (DinkToPdf)</p>
+      <pre><code data-language="csharp">
+        public string GeneratePDF(out string fileName, string url, int copies, bool isPotrait)
+        {
+            string status = "ok";
+            fileName = "Document_" + DateTime.Now.ToString("dd-MM-yyyy_HH-mm-ss") + ".pdf";
+        
+            Orientation orientation;
+            MarginSettings margin;
+            if (isPotrait == true)
+            {
+                orientation = Orientation.Portrait;
+                margin = new MarginSettings() { Top = 12, Bottom = 9, Left = 14, Right = 14 };
+            }
+            else
+            {
+                orientation = Orientation.Landscape;
+                margin = new MarginSettings() { Top = 12, Bottom = 9, Left = 7, Right = 7 };
+            }
+        
+            var doc = new HtmlToPdfDocument()
+            {
+                GlobalSettings =
+                    {
+                        ColorMode = ColorMode.Color,
+                        Orientation = orientation,
+                        PaperSize = PaperKind.A4,
+                        Margins = margin,
+                        Out = rootPath+fileName,
+                        Copies = copies
+                    },
+                Objects =
+                    {
+                        new ObjectSettings()
+                        {
+                            PagesCount = true,
+                            HeaderSettings = { FontName = "Arial", FontSize = 3, Right = "", Line = false, HtmUrl=""},
+                            FooterSettings = { FontName = "Arial", FontSize = 6, Line = false, Center = " " },
+                            Page =url
+                        }
+                    }
+            };
+        
+            try
+            {
+                _converter.Convert(doc);
+            }
+            catch (Exception e)
+            {
+                status = e.Message;
+            }
+            return status;
+        }
+        </code></pre>
+
+        
+      <p class="heading">Convert days to Year, Month and Days</p>
+      <pre><code data-language="csharp">
+        public static string DaysToBanglaYears(int days)
+        {
+            int years = days / 365;
+            int months = (days - (days % 365)) / 30;
+            int day = (days - (years * 365) + (months * 30));
+            return years + " বছর " + months + " মাস " + day + " দিন";
+        }
+        public static string DaysToEnglishYears(int days)
+        {
+            int years = days / 365;
+            int months = (days - (days % 365)) / 30;
+            int day = (days - (years * 365) + (months * 30));
+            return years + " years " + months + " months " + day + " days";
+        }
+        </code></pre>
+
+        
+      <p class="heading">Find All Fridays in a year</p>
+      <pre><code data-language="csharp">
+        public async Task< IEnumerable< DateTime >> FindAllFridayOfAYear(int year)
+        {
+            var dateList = new List< DateTime >();
+        
+            DateTime startdate = new DateTime(year, 1, 1);
+            DateTime enddate = new DateTime(year, 12, 31);
+        
+            while (startdate.DayOfWeek != DayOfWeek.Friday)
+                startdate = startdate.AddDays(1);
+        
+            while (startdate < enddate)
+            {
+                dateList.Add(startdate);
+                //yield return startdate;
+                startdate = startdate.AddDays(7);
+            };
+            return dateList;
+        }
+
+        [Route("global/api/GetAllCourseInstructor/")]
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task< IActionResult > GetAllCourseInstructor()
+        {
+            return Json(await courseService.GetAllCourseInstructor());
+        }
+
+        public async Task< IEnumerable< TeacherInfo >> GetAllCourseInstructor()
+        {
+            return await _context.teacherInfos.AsNoTracking().ToListAsync();
+        }
+        </code></pre>
+    </div>
+
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/rainbow-custom.min.js"></script>
+    <script src="js/clipboard.js"></script>
+    <script>
+      $(document).ready(function () {
+        $(".rainbow").click(function () {
+          var copyText = $(this).text();
+          copyText.select();
+          var clipboard = new ClipboardJS(".rainbow");
+          clipboard.on("success", function (e) {
+            console.info("Action:", e.action);
+            console.info("Text:", e.text);
+            console.info("Trigger:", e.trigger);
+
+            e.clearSelection();
+          });
+
+          // copyText.select();
+          // copyText.setSelectionRange(0, 99999); /* For mobile devices */
+          // navigator.clipboard.writeText(copyText.value);
+          // alert("Copied the text: " + copyText.value);
+        });
+      });
+    </script>
+  </body>
+</html>
