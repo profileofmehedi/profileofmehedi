@@ -8,9 +8,21 @@
     <link rel="stylesheet" href="css/rainbow.css" />
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <style>
+      body {
+        background-color: #f1f3f4;
+      }
       pre {
         color: white;
         background-color: #2c3e50;
+      }
+      .main-header {
+        padding: 10px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        text-align: center;
+        color: white;
+        background-color: #252530;
+        border-bottom: 5px solid darkred;
       }
       .heading {
         padding: 8px;
@@ -22,6 +34,7 @@
   </head>
   <body>
     <div class="container">
+      <p class="main-header">Javascript</p>
       <p class="heading">jQuery Common Method For AJAX</p>
       <pre><code data-language="javascript">
         var Common = {
@@ -296,6 +309,13 @@
     <script src="js/clipboard.js"></script>
     <script>
       $(document).ready(function () {
+        // var key = prompt("Type the key here..", "");
+        // if (key == "12345") {
+        //   $(".container").show();
+        // } else {
+        //   location.href = "http://profileofmehedi.xyz";
+        // }
+
         $(".rainbow").click(function () {
           var copyText = $(this).text();
           copyText.select();

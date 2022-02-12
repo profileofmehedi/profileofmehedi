@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="Importants/css/bootstrap.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/icheck-bootstrap.min.css" />
+    <link rel="stylesheet" href="css/adminlte.min.css?v=3.2.0" />
+    <style>
+        body{
+            background-color: #2C3E50 !important;
+        }
+        .login-box .card{
+            color: white;
+            background-color: #1B1E2D !important;
+        }
+    </style>
+  </head>
+  <body class="hold-transition login-page">
+    <div class="login-box">
+      <div class="card card-outline card-primary">
+        <div class="card-header text-center">
+          <a href="http://profileofmehedi.xyz" class="h1"><b>Login</b></a>
+        </div>
+        <div class="card-body">
+          <form id="loginForm">
+            <div class="input-group mb-3">
+              <input
+                type="text"
+                id="username"
+                name="username"
+                class="form-control"
+                placeholder="Username"
+              />
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-envelope"></span>
+                </div>
+              </div>
+            </div>
+            <div class="input-group mb-3">
+              <input
+                name="password"
+                id="password"
+                type="password"
+                class="form-control"
+                placeholder="Password"
+              />
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-lock"></span>
+                </div>
+              </div>
+            </div>
+            <div class="input-group mb-3">
+              <select name="type" id="type" class="form-control">
+                <option value="csharp">C-Sharp</option>
+                <option value="js">Javascript</option>
+              </select>
+              <div class="input-group-append">
+                <div class="input-group-text">
+                  <span class="fas fa-code"></span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-8">
+                <!-- <div class="icheck-primary">
+                  <input type="checkbox" id="remember" />
+                  <label for="remember"> Remember Me </label>
+                </div> -->
+              </div>
+
+              <div class="col-4">
+                <button type="button" id="loginBtn" class="btn btn-primary btn-block">
+                  Sign In
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="Importants/js/jquery-3.4.1.min.js"></script>
+    <script src="Importants/js/bootstrap.min.js"></script>
+    <script src="js/adminlte.min.js?v=3.2.0"></script>
+    <script>
+      $(document).ready(function () {
+        $("#loginBtn").click(function () {
+          var username = $("#username").val();
+          var password = $("#password").val();
+          var type = $("#type").val();
+
+          if ((username = "admin" && password == "12345")) {
+            if (type == "csharp") {
+                location.href = "Importants/csharp.html";
+            } else if (type == "js") {
+                location.href = "Importants/js.html";
+            } else {
+              location.href = "http://profileofmehedi.xyz";
+            }
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

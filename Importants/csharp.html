@@ -8,9 +8,21 @@
     <link rel="stylesheet" href="css/rainbow.css" />
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <style>
+      body {
+        background-color: #f1f3f4;
+      }
       pre {
         color: white;
         background-color: #2c3e50;
+      }
+      .main-header {
+        padding: 10px;
+        font-weight: bold;
+        margin-bottom: 5px;
+        text-align: center;
+        color: white;
+        background-color: #252530;
+        border-bottom: 5px solid darkred;
       }
       .heading {
         padding: 8px;
@@ -22,6 +34,7 @@
   </head>
   <body>
     <div class="container">
+      <p class="main-header">C-Sharp</p>
       <p class="heading">Check user role in _Layout.cshtml</p>
       <pre><code data-language="csharp">
             string userName = HttpContext.User.Identity.Name;
@@ -43,24 +56,23 @@
             <p>@total BDT</p>
         </code></pre>
 
-        
       <p class="heading">Methods For Api (AJAX)</p>
       <pre><code data-language="csharp">
         [Route("api/Student/StudentInfo/Details/{id}")]
-        public async Task<IActionResult> Details(int id)
+        public async Task< IActionResult > Details(int id)
         {
             var result = await _studentInfoService.GetStudentsById(id);
             return Json(result);
         }
         
         [HttpGet]
-        public async Task<IActionResult> Details(int id)
+        public async Task< IActionResult > Details(int id)
         {
             var data = await _studentInfoService.GetStudentsById(id);
             return Json(data);
         }
         
-        public async Task<IActionResult> StudentInfoApi(int id)
+        public async Task< IActionResult > StudentInfoApi(int id)
         {
             string userName = HttpContext.User.Identity.Name;
             var user = await _userManager.FindByNameAsync(userName);
@@ -75,11 +87,9 @@
         }
         </code></pre>
 
-
-        
       <p class="heading">C# Service For Save And Update</p>
       <pre><code data-language="csharp">
-        public async Task<int> SaveStudentInfo(StudentInfoViewModel student)
+        public async Task< int > SaveStudentInfo(StudentInfoViewModel student)
         {
             try
             {
@@ -101,10 +111,9 @@
         }
         </code></pre>
 
-        
       <p class="heading">C# LINQ LEFT JOIN</p>
       <pre><code data-language="csharp">
-        public async Task<IEnumerable<RequisitionViewModel>> GetOnGoingRequisition(int userId)
+        public async Task< IEnumerable< RequisitionViewModel >> GetOnGoingRequisition(int userId)
         {
             var data = await (from r in _context.RequisitionMasters
                                 join U in _context.Users on r.reqBy equals U.userId
@@ -126,15 +135,14 @@
         }
         </code></pre>
 
-        
       <p class="heading">C# Get Related Table Count By View Model</p>
       <pre><code data-language="csharp">
         public class CourseExamViewModel
         {
-            public IEnumerable<AdminExamViewModel> Exams { get; set; }
+            public IEnumerable< AdminExamViewModel > Exams { get; set; }
         }
         
-        public async Task<IActionResult> CourseExams(int id)
+        public async Task< IActionResult > CourseExams(int id)
         {
             var model = new CourseExamViewModel
             {
@@ -143,10 +151,10 @@
             return View(model);
         }
         
-        public async Task<IEnumerable<AdminExamViewModel>> GetExamByCourseId(int id)
+        public async Task< IEnumerable< AdminExamViewModel >> GetExamByCourseId(int id)
         {
             var exams = await _context.exams.Where(x => x.courseInfoId == id).Include(x => x.courseInfo).AsNoTracking().ToListAsync();
-            List<AdminExamViewModel> result = new List<AdminExamViewModel>();
+            List< AdminExamViewModel > result = new List< AdminExamViewModel >();
             foreach (var data in exams)
             {
                 result.Add(new AdminExamViewModel
@@ -162,14 +170,13 @@
             return result;
         }
         </code></pre>
-      
-        
+
       <p class="heading">Group by in C#(Lambda)</p>
       <pre><code data-language="csharp">
         return await _context.tableName.GroupBy(x => x.workDate).Select(x => x.First()).CountAsync();
         </code></pre>
 
-        <p class="heading">Group by in C#(LINQ)</p>
+      <p class="heading">Group by in C#(LINQ)</p>
       <pre><code data-language="csharp">
         var data = await (from e in _context.employeeInfos
 				  join p in _context.employeePostings
@@ -178,17 +185,17 @@
 				  select e).GroupBy(x => x.Id).Select(x => x.FirstOrDefault()).ToListAsync();
         </code></pre>
 
-        <p class="heading">Create empty object</p>
+      <p class="heading">Create empty object</p>
       <pre><code data-language="csharp">
-        IEnumerable<EmployeeInfo> empList = Enumerable.Empty<EmployeeInfo>();
+        IEnumerable< EmployeeInfo > empList = Enumerable.Empty< EmployeeInfo >();
         </code></pre>
 
-        <p class="heading">Read HTML as normal string in cshtml</p>
+      <p class="heading">Read HTML as normal string in cshtml</p>
       <pre><code data-language="csharp">
         @Html.Raw(Model.applicationForm?.termsAndConditions)
         </code></pre>
 
-        <p class="heading">Check modelstate errors</p>
+      <p class="heading">Check modelstate errors</p>
       <pre><code data-language="csharp">
         if (ModelState.IsValid)
         {
@@ -202,7 +209,6 @@
         }
         </code></pre>
 
-        
       <p class="heading">MVC Core Print From HTML</p>
       <pre><code data-language="csharp">
         <a class="btn btn-success" href="/SCMRequisition/RequisitionNew/ApprovedRequisitionForAdminPreviewPDF?Id=@ViewBag.Id" target="_blank" title="Print"><i class="fa fa-file"></i> Print</a>
@@ -284,11 +290,9 @@
         }
         </code></pre>
 
-
-        
       <p class="heading">C# Service For Delete</p>
       <pre><code data-language="csharp">
-        public async Task< bool> DeleteRequisitionMasterById(int id)
+        public async Task< bool > DeleteRequisitionMasterById(int id)
         {
             _context.RequisitionMasters.Remove(_context.RequisitionMasters.Find(id));
             return 1 == await _context.SaveChangesAsync();
@@ -301,37 +305,35 @@
         }
         </code></pre>
 
-        
       <p class="heading">C# Service For Get (With Include)</p>
       <pre><code data-language="csharp">
         public async Task< IEnumerable< RequisitionDetail >> GetItemByDepartmentWisebyID(string name)
-            {
-                var result = await _context.RequisitionDetails.Where(e => e.requisitionMaster.reqDept == name).Include(x => x.requisitionMaster).Include(x => x.employee.section).AsNoTracking().ToListAsync();
-                return result;
-            }
-            
-            public async Task< IEnumerable< RequisitionViewModel >> GetDraftRequisition(int userId)
-            {
-                var data = await (from r in _context.RequisitionMasters
-                                  join U in _context.Users on r.reqBy equals U.userId
-                                  join E in _context.employeeInfos on U.Id equals E.ApplicationUserId
-                                  join EI in _context.photographs on E.Id equals EI.employeeId
-                                  where r.reqBy == userId && r.reqType == "Draft"
-                                  select new RequisitionViewModel
-                                  {
-                                      reqMasterId = r.Id,
-                                      reqNo = r.reqNo,
-                                      reqDate = r.reqDate,
-                                      subject = r.subject,
-                                      reqDept = r.reqDept,
-                                      reqType = r.reqType,
-                                      isPostPR = EI.url
-                                  }).ToListAsync();
-                return data;
-            }
+        {
+            var result = await _context.RequisitionDetails.Where(e => e.requisitionMaster.reqDept == name).Include(x => x.requisitionMaster).Include(x => x.employee.section).AsNoTracking().ToListAsync();
+            return result;
+        }
+        
+        public async Task< IEnumerable< RequisitionViewModel >> GetDraftRequisition(int userId)
+        {
+            var data = await (from r in _context.RequisitionMasters
+                                join U in _context.Users on r.reqBy equals U.userId
+                                join E in _context.employeeInfos on U.Id equals E.ApplicationUserId
+                                join EI in _context.photographs on E.Id equals EI.employeeId
+                                where r.reqBy == userId && r.reqType == "Draft"
+                                select new RequisitionViewModel
+                                {
+                                    reqMasterId = r.Id,
+                                    reqNo = r.reqNo,
+                                    reqDate = r.reqDate,
+                                    subject = r.subject,
+                                    reqDept = r.reqDept,
+                                    reqType = r.reqType,
+                                    isPostPR = EI.url
+                                }).ToListAsync();
+            return data;
+        }
         </code></pre>
 
-        
       <p class="heading">C# Service For Get (With Sql Stored Procedure)</p>
       <pre><code data-language="csharp">
         public async Task< RequisitionAutoNumberViewModel > GetReqAutoNumberBySp(int projectId, string reqBy)
@@ -347,7 +349,6 @@
         }
         </code></pre>
 
-        
       <p class="heading">Get IP Address</p>
       <pre><code data-language="csharp">
         public string GetLocalIPAddress()
@@ -364,7 +365,6 @@
         }
         </code></pre>
 
-        
       <p class="heading">Generate PDF (DinkToPdf)</p>
       <pre><code data-language="csharp">
         public string GeneratePDF(out string fileName, string url, int copies, bool isPotrait)
@@ -420,7 +420,6 @@
         }
         </code></pre>
 
-        
       <p class="heading">Convert days to Year, Month and Days</p>
       <pre><code data-language="csharp">
         public static string DaysToBanglaYears(int days)
@@ -439,7 +438,6 @@
         }
         </code></pre>
 
-        
       <p class="heading">Find All Fridays in a year</p>
       <pre><code data-language="csharp">
         public async Task< IEnumerable< DateTime >> FindAllFridayOfAYear(int year)
@@ -482,6 +480,13 @@
     <script src="js/clipboard.js"></script>
     <script>
       $(document).ready(function () {
+        // var key = prompt("Type the key here..", "");
+        // if (key == "12345") {
+        //   $(".container").show();
+        // } else {
+        //   location.href = "http://profileofmehedi.xyz";
+        // }
+
         $(".rainbow").click(function () {
           var copyText = $(this).text();
           copyText.select();
