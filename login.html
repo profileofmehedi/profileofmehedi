@@ -10,17 +10,24 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
     />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet">
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="css/icheck-bootstrap.min.css" />
     <link rel="stylesheet" href="css/adminlte.min.css?v=3.2.0" />
     <style>
-        body{
-            background-color: #2C3E50 !important;
-        }
-        .login-box .card{
-            color: white;
-            background-color: #1B1E2D !important;
-        }
+      body {
+        background-color: #2c3e50 !important;
+      }
+      .login-box {
+        position: absolute;
+        z-index: 1;
+      }
+      .login-box .card {
+        color: white;
+        background-color: #1b1e2d !important;
+      }
     </style>
   </head>
   <body class="hold-transition login-page">
@@ -63,6 +70,7 @@
               <select name="type" id="type" class="form-control">
                 <option value="csharp">C-Sharp</option>
                 <option value="js">Javascript</option>
+                <option value="imp">Importants</option>
               </select>
               <div class="input-group-append">
                 <div class="input-group-text">
@@ -79,7 +87,11 @@
               </div>
 
               <div class="col-4">
-                <button type="button" id="loginBtn" class="btn btn-primary btn-block">
+                <button
+                  type="button"
+                  id="loginBtn"
+                  class="btn btn-primary btn-block"
+                >
                   Sign In
                 </button>
               </div>
@@ -92,6 +104,8 @@
     <script src="Importants/js/jquery-3.4.1.min.js"></script>
     <script src="Importants/js/bootstrap.min.js"></script>
     <script src="js/adminlte.min.js?v=3.2.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.10.2/p5.min.js"></script>
+    <script src="js/animate.js"></script>
     <script>
       $(document).ready(function () {
         $("#loginBtn").click(function () {
@@ -101,9 +115,11 @@
 
           if ((username = "admin" && password == "12345")) {
             if (type == "csharp") {
-                location.href = "Importants/csharp.html";
+              location.href = "Importants/csharp.html";
             } else if (type == "js") {
-                location.href = "Importants/js.html";
+              location.href = "Importants/js.html";
+            } else if (type == "imp") {
+              location.href = "Importants/index.html";
             } else {
               location.href = "http://profileofmehedi.xyz";
             }
