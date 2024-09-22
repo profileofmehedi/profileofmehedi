@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:image" content="https://coding-drop.github.io/img/clock.jpg">
+    <meta name="twitter:image" content="https://coding-drop.github.io/img/clock.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="938">
+    <title>World Clocks</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .clock-card {
+            margin: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .clock {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            position: relative;
+            border: 5px double #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .hand {
+            position: absolute;
+            background: #333;
+            border-radius: 5px;
+            transform-origin: bottom center;
+            bottom: 50%;
+        }
+        .hour {
+            height: 35px;
+            width: 5px;
+        }
+        .minute {
+            height: 55px;
+            width: 3px;
+        }
+        .second {
+            height: 65px;
+            width: 2px;
+            background: red;
+        }
+        .digital-clock {
+            font-weight: bold;
+        }
+        .hour-number {
+            position: absolute;
+            font-size: 14px;
+            font-weight: bold;
+            transform: translate(-50%, -50%);
+        }
+
+
+        .hour_1{
+            left: 105px;
+            top: 23.03847577293368px;
+        }
+        .hour_2{
+            left: 125.962px;
+            top: 46px;
+        }
+        .hour_3{
+            left: 133px; top: 75px;
+        }
+        .hour_4{
+            left: 120.962px; top: 102px;
+        }
+        .hour_5{
+            left: 105px; top: 119.962px;
+        }
+        .hour_6{
+            left: 75.00000000000001px; top: 129px;
+        }
+        .hour_7{
+            left: 44.99999999999999px; top: 122px;
+        }
+        .hour_8{
+            left: 23.038475772933694px; top: 105.00000000000003px;
+        }
+        .hour_9{
+            left: 15px; top: 75.00000000000001px;
+        }
+        .hour_10{
+            left: 23.038475772933687px; top: 44.99999999999999px;
+        }
+        .hour_11{
+            left: 44.99999999999997px; top: 23.038475772933694px;
+        }
+        .hour_12{
+            left: 74.99999999999999px; top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1 class="text-center my-4">World Clocks</h1>
+    <div class="row" id="clock-container"></div>
+</div>
+
+<script>
+    const clocks = [
+        { country: 'New York, USA', flag: 'https://flagcdn.com/us.svg', timezone: 'America/New_York' },
+        { country: 'California, USA', flag: 'https://flagcdn.com/us.svg', timezone: 'America/Los_Angeles' },
+        { country: 'London, UK', flag: 'https://flagcdn.com/gb.svg', timezone: 'Europe/London' },
+        { country: 'Tokyo, Japan', flag: 'https://flagcdn.com/jp.svg', timezone: 'Asia/Tokyo' },
+        { country: 'Sydney, Australia', flag: 'https://flagcdn.com/au.svg', timezone: 'Australia/Sydney' },
+        { country: 'Berlin, Germany', flag: 'https://flagcdn.com/de.svg', timezone: 'Europe/Berlin' },
+        { country: 'Kuala Lumpur, Malaysia', flag: 'https://flagcdn.com/my.svg', timezone: 'Asia/Kuala_Lumpur' },
+        { country: 'Singapore', flag: 'https://flagcdn.com/sg.svg', timezone: 'Asia/Singapore' },
+        { country: 'Dhaka, Bangladesh', flag: 'https://flagcdn.com/bd.svg', timezone: 'Asia/Dhaka' },
+        { country: 'New Delhi, India', flag: 'https://flagcdn.com/in.svg', timezone: 'Asia/Kolkata' },
+        { country: 'Riyadh, Saudi Arabia', flag: 'https://flagcdn.com/sa.svg', timezone: 'Asia/Riyadh' }
+    ];
+
+    clocks.forEach(clock => {
+        const card = `
+            <div class="col-md-4">
+                <div class="card clock-card">
+                    <div class="card-header">
+                        <img src="${clock.flag}" alt="${clock.country} flag" style="width: 30px; height: auto;">
+                        <h5>${clock.country}</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="clock" id="${clock.timezone}">
+                            <div class="hand hour" id="hour-${clock.timezone}"></div>
+                            <div class="hand minute" id="minute-${clock.timezone}"></div>
+                            <div class="hand second" id="second-${clock.timezone}"></div>
+                            ${generateHourNumbers()}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div id="digital-${clock.timezone}" class="digital-clock"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.getElementById('clock-container').innerHTML += card;
+
+        // Initialize clocks
+        setInterval(() => updateClock(clock.timezone), 1000);
+    });
+
+    function generateHourNumbers() {
+        let hourNumbersHtml = '';
+        const radius = 60; // Adjusted radius to place numbers closer to the edge
+        for (let i = 1; i <= 12; i++) {
+            // const angle = (i * 30) * (Math.PI / 180); // Convert degrees to radians
+            // const x = 75 + radius * Math.sin(angle); // Adjusted X position for a 150x150 clock
+            // const y = 75 - radius * Math.cos(angle); // Adjusted Y position for a 150x150 clock
+            hourNumbersHtml += `<div class="hour-number hour_${i}">${i}</div>`;
+        }
+        return hourNumbersHtml;
+    }
+
+    function updateClock(timezone) {
+        const options = { timeZone: timezone, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+        const localTimeString = new Intl.DateTimeFormat('en-US', options).format(new Date());
+        const [hour, minute, second] = localTimeString.split(':');
+
+        // Update digital clock
+        document.getElementById(`digital-${timezone}`).innerText = localTimeString;
+
+        // Update analog clock
+        const secondDeg = ((parseInt(second) / 60) * 360);
+        const minuteDeg = ((parseInt(minute) / 60) * 360) + ((parseInt(second) / 60) * 6);
+        const hourDeg = ((parseInt(hour) % 12) / 12) * 360 + ((parseInt(minute) / 60) * 30);
+
+        document.getElementById(`second-${timezone}`).style.transform = `rotate(${secondDeg}deg)`;
+        document.getElementById(`minute-${timezone}`).style.transform = `rotate(${minuteDeg}deg)`;
+        document.getElementById(`hour-${timezone}`).style.transform = `rotate(${hourDeg}deg)`;
+    }
+</script>
+
+</body>
+</html>
